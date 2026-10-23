@@ -1,6 +1,6 @@
 # HALLUCINATIONS — ajanın yanlış çıkarımları
 
-Ajan: Claude Opus 5.5 (Oturum 1, inceleme). Her kayıt: ne dendi, nasıl fark edildi, hangi kontrol yakaladı, ne düzeltildi.
+Ajan: Claude Opus 5.5. H1–H4 Oturum 1 (inceleme), H5–H7 Oturum 2 (yazım). Her kayıt: ne dendi, nasıl fark edildi, hangi kontrol yakaladı, ne düzeltildi.
 
 ## H1 — "Df her zaman tam sayıdır" varsayımı
 - **Ne dendi:** İlk vektör planında (EKSIK_VAKALAR, X08) Df = 1.5 "geçersiz girdi" sınıfına kondu. G*Power'ın bunu reddedeceği örtük olarak varsayıldı. Aynı varsayım sanity betiğine de girdi: Df `int(float(...))` ile tam sayıya çevriliyordu.
@@ -25,3 +25,21 @@ Ajan: Claude Opus 5.5 (Oturum 1, inceleme). Her kayıt: ne dendi, nasıl fark ed
 - **Nasıl fark edildi:** Oracle id 29, 30 tarifin doğru olduğunu gösterdi. Ancak kullanıcı hesap düğmesine basmadan görüntü aldı; talimat yeterince net değildi.
 - **Hangi kontrol yakaladı:** Görsel okuma (panelde w = "?").
 - **Düzeltme:** EKSIK_VAKALAR'a adım adım D01b/D02b talimatı eklendi.
+
+## H5 — "2 saniye sınırı rahat sağlanır" varsayımı (Oturum 2)
+- **Ne dendi:** Motor `scipy.stats` ile yazıldı. Çağrı süresinin sorun olmayacağı varsayıldı.
+- **Nasıl fark edildi:** Tek çağrı ~0.97 sn sürdü; bunun ~0.96 sn'si yalnızca `import scipy.stats`.
+- **Hangi kontrol yakaladı:** Elle yapılan süre ölçümü. Hiçbir test yakalamadı, çünkü süre sınırın altındaydı.
+- **Düzeltme:** `scipy.special` kullanıldı (~0.4 sn). İki yol arasındaki sayısal fark en fazla 6e-16 ölçüldü.
+
+## H6 — Anlamsız test koşulu (Oturum 2)
+- **Ne dendi:** "Kat kuralı yok" senaryosunun testine, örnek N'ler tek sayı olduğu için her durumda geçecek bir koşul yazıldı. Test hiçbir şeyi sınamıyordu.
+- **Nasıl fark edildi:** Ajan testi yazarken koşulun her zaman doğru döneceğini fark etti.
+- **Hangi kontrol yakaladı:** Öz denetim. Böyle bir testi mutasyon testi yakalardı (yapılmadı).
+- **Düzeltme:** Koşul, N'nin (df+1)'in katı olmadığını sınayacak biçimde düzeltildi.
+
+## H7 — "`pytest` komutu doğru ortamı görür" varsayımı (Oturum 2)
+- **Ne dendi:** Testlerin `pytest -q` ile çalışacağı varsayıldı.
+- **Nasıl fark edildi:** `ModuleNotFoundError: chisq_power`. PATH'teki pytest ayrı bir yorumlayıcıya bağlı bir araçtı.
+- **Hangi kontrol yakaladı:** Testin ilk çalıştırılması.
+- **Düzeltme:** README'de komut `python -m pytest -q` olarak yazıldı.

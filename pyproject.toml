@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chisq-power"
+version = "0.1.0"
+description = "Power analysis engine and CLI for chi-square contingency table tests"
+requires-python = ">=3.9"
+dependencies = ["scipy>=1.7"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+gpower-clone = "chisq_power.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

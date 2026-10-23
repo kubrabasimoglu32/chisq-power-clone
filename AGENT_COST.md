@@ -23,5 +23,21 @@
 - Hata diyaloğunun girdi alanlarını örttüğünü baştan söylemek (id 13'te w okunamadı).
 - İkinci tur görseller adlandırılmadan geldi; içerikten eşleştirildi. Dosya adı kuralını daha görünür vermek gerekirdi.
 
-## Oturum 2 — yazım
-_(doldurulacak)_
+## Oturum 2 — yazım (temiz oda)
+
+| alan | değer |
+|---|---|
+| Ajan | Claude Opus 5.5, Oturum 1'den ayrı başlatılmış bağımsız ajan; yalıtılmış klasör |
+| Tarih | 2026-10-23 |
+| Süre | ~21 dakika (ölçek koşusu ~8 dk dahil) |
+| Token | ~105 bin (ajan araç sayacı) |
+| Araç çağrısı | 35 |
+| Commit | 3 (motor+CLI+paket, testler, notlar+rapor) |
+| Sonuç | ilk denemede oracle 27/27, N 13/13, ölçek 1050/1050 |
+
+### Takıldığı yerler
+- `scipy.stats` içe aktarması tek başına ~1 sn sürüyordu (2 sn sınırının yarısı). `scipy.special`'a geçilince süre ~0.4 sn'ye düştü.
+- PATH'teki `pytest` ayrı bir ortamda kurulu olduğu için paketi göremedi; testler `python -m pytest` ile çalıştırıldı.
+
+### Neyi farklı yapardık
+- Çağrı süresi sınırını SPEC'e bir senaryo olarak eklemek. Sorunu test değil, elle yapılan ölçüm yakaladı.

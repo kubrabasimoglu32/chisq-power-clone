@@ -6,3 +6,5 @@ GPower*/
 __pycache__/
 .venv/
 images/
+.pytest_cache/
+*.egg-info/
