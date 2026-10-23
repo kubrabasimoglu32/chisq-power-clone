@@ -1,0 +1,8 @@
+GPower.exe
+*.exe
+GPower*/
+*.rep/
+*.gpr
+__pycache__/
+.venv/
+images/

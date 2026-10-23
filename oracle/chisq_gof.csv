@@ -1,0 +1,31 @@
+id,mod,w,alpha,power,df,total_n,actual_power,critical_chi2,lambda,screenshot,kaynak,notlar
+1,apriori,0.3,0.05,0.80,1,88,0.8035275,3.8414588,7.9200000,v1.png,?,
+2,apriori,0.3,0.05,0.80,2,108,0.8036939,5.9914645,9.7200000,v2.png,?,
+3,apriori,0.3,0.05,0.80,4,133,0.8013043,9.4877290,11.9700000,v3.png,?,
+4,apriori,0.1,0.05,0.80,1,785,0.8000569,3.8414588,7.8500000,v4.png,?,
+5,apriori,0.5,0.05,0.80,1,32,0.8074304,3.8414588,8.0000000,v5.png,?,
+6,apriori,0.3,0.05,0.95,3,191,0.9502399,7.8147279,17.1900000,v6.png,?,
+7,apriori,0.3,0.01,0.90,5,245,0.9003979,15.0862725,22.0500000,v7.png,?,
+8,apriori,0.3,0.05,0.80,10,181,0.8014702,18.3070381,16.2900000,v8.png,?,
+9,apriori,0.3,0.05,0.80,50,336,0.8006734,67.5048065,30.2400000,v9.png,?,
+10,apriori,0.01,0.05,0.80,1,78489,0.8000020,3.8414588,7.8489000,v10.png,?,
+11,apriori,2,0.05,0.80,1,2,0.8074304,3.8414588,8.0000000,v11.png,?,w alanında Cohen konvansiyon ipucu açık
+12,apriori,0.3,0.05,0.06,1,1,0.0603726,3.8414588,0.0900000,v12.png,?,
+13,apriori,,0.05,0.04,1,,,,,v13.png,?,"Input error: 'Power must be greater than or equal to alpha.' Çıktılar '?' gösteriyor; w alanı diyalog altında kaldı, okunamadı (planlanan değer 0.3)"
+14,apriori,0.1,0.05,0.80,1,785,0.8000569,3.8414588,7.8500000,v14.png,?,id 4 ile aynı girdi; w alanında Cohen konvansiyon ipucu açık
+15,posthoc,0.3,0.05,,1,88,0.8035275,3.8414588,7.9200000,v15.png,?,P01; actual_power = ekrandaki Power (1−β err prob)
+16,posthoc,0.3,0.05,,2,50,0.4604212,5.9914645,4.5000000,v16.png,?,P02
+17,posthoc,0.5,0.05,,1,10,0.3526081,3.8414588,2.5000000,v17.png,?,P03
+18,posthoc,0.1,0.05,,1,100,0.1700750,3.8414588,1.0000000,v18.png,?,P04
+19,posthoc,0.3,0.05,,1,1,0.0603726,3.8414588,0.0900000,v19.png,?,P05
+20,posthoc,0.3,0.01,,3,200,0.8732131,11.3448667,18.0000000,v20.png,?,P06
+21,apriori,0,0.05,0.80,1,,,,,v21.png,?,"X01; Input error: 'Effect size w must be greater 1e-06.' Çıktılar '?'"
+22,apriori,-0.3,0.05,0.80,1,,,,,v22.png,?,"X02; Input error: 'Effect size w must be greater 1e-06.' Çıktılar '?'"
+23,apriori,0.3,0,0.80,1,,,,,v23.png,?,"X03; Input error: 'Alpha is outside the admissible range (1e-07, 1).' Çıktılar '?'"
+24,apriori,0.3,1,0.80,1,,,,,v24.png,?,"X04; Input error: 'Alpha is outside the admissible range (1e-07, 1).' Çıktılar '?'"
+25,apriori,0.3,0.05,0.80,0,,,,,v25.png,?,"X06; Input error: 'Degrees of Freedom must be greater or equal one.' Çıktılar '?'"
+26,posthoc,0.3,0.05,,1,0,,,,v26.png,?,"X07; Input error: 'Total sample size is outside the admissible range (1, 2147483646)' Çıktılar '?'"
+27,apriori,0.3,0.05,0.80,1.5,99,0.8030493,4.9801953,8.9100000,v27.png,?,X08; kesirli Df hata vermedi ve hesaplandı
+28,apriori,0.3,0.05,0.05,1,1,0.0603726,3.8414588,0.0900000,v28.png,?,X09; power = α kabul edildi
+29,determine,,,,,,,,,v29.png,?,"D01a; Determine paneli: Number of cells 4, p(H0) 0.25/0.25/0.25/0.25, p(H1) 0.35/0.15/0.15/0.35; panel Effect size w = '?' (henüz hesaplanmamış). Ana penceredeki değerler önceki C01 hesabına ait, bu satıra ait değil"
+30,determine,,,,,,,,,v30.png,?,"D02a; Determine paneli: Number of cells 6, p(H0) 0.166667×6, p(H1) 0.10/0.15/0.25/0.20/0.15/0.15; panel Effect size w = '?'. Ana penceredeki değerler önceki C02 hesabına ait"
