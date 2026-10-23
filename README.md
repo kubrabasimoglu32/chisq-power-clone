@@ -50,7 +50,7 @@ python tests/gen_scale_statsmodels.py        # ölçek vektörlerini yeniden ür
 ```
 
 ### Sözleşmeden G*Power'a göre bilinçli sapmalar
-G*Power'ın kesirli df'yi kabul etmesi, N = 1'e izin vermesi gibi farklar `SPEC.md` §3'te (S1–S6) listelenmiştir. CLI sözleşmeye uyar.
+G*Power'ın kesirli df'yi kabul etmesi, N = 1'e izin vermesi gibi farklar `SPEC.md` §4'te (S1–S7) listelenmiştir. CLI sözleşmeye uyar.
 
 ## REA ve Ghidra kontrolü
 

@@ -23,4 +23,4 @@ Sen **Oturum 2 (yazım)** ajanısın. χ² olumsallık tablosu güç analizi iç
 ## Kurallar
 - Projeye "G*Power" adını verme. Komut adı `gpower-clone` sözleşme gereğidir.
 - Kodda decompile çıktısı ya da G*Power'dan kopyalanmış parça olmayacak.
-- SPEC §3'teki sapmalarda (S1–S6) SPEC'in kararına uy; "BELİRSİZ" olanlar için bana sor.
+- SPEC §4'teki sapmalarda (S1–S7) SPEC'in kararına uy; "BELİRSİZ" olanlar için bana sor.

@@ -2,7 +2,7 @@
 
 Kaynaklar: `oracle/chisq_gof.csv` (G*Power 3.1.9.7 ekran görüntülerinden 30 satır), LEDGER.md ([DOK] ve [AJAN] maddeleri) ve dersin CLI sözleşmesi (CONTRACT). Bu belge yalnızca davranışı tanımlar; kod, decompile çıktısı veya algoritma adımı içermez.
 
-Kapsam: **a-priori** (N hesapla) ve **post-hoc** (güç hesapla). Sözleşmede adı geçen compromise / criterion / sensitivity modları bu sürümün kapsamı dışında (bkz. S5).
+Kapsam: **a-priori** (N hesapla) ve **post-hoc** (güç hesapla). Sözleşmede adı geçen compromise / criterion / sensitivity modları bu sürümün kapsamı dışında (bkz. §4, S5).
 
 ## 1. CLI sözleşmesi
 
@@ -36,7 +36,18 @@ stdout'a tek satır JSON: `{"error": "<insan okuyabilir açıklama>", "code": "<
 - `n_total` **tam** eşleşmeli.
 - Ondalık alanlar: referansla mutlak **ya da** göreli fark ≤ 1e-6.
 
-## 2. Davranış
+## 2. Tanımlar [DOK]
+
+G*Power 3.1 kılavuzunun "Goodness-of-fit tests: Contingency tables" bölümü ve Faul ve ark. (2007):
+- **Etki büyüklüğü w:** H0 ve H1 hücre olasılıklarından türetilen Cohen w'si. CLI w'yi doğrudan alır.
+- **Noncentrality parametresi (ncp):** w² × N.
+- **Kritik değer (critical_chi2):** serbestlik derecesi df olan merkezi χ² dağılımının üst α noktası.
+- **Güç:** serbestlik derecesi df ve noncentrality parametresi ncp olan merkezi olmayan χ² dağılımından gelen bir değerin kritik değeri aşma olasılığı.
+- **A priori N:** bu gücün hedef değere eşit ya da ondan büyük olduğu en küçük tam sayı N (bkz. A3 senaryosu).
+
+Oracle'daki 21 sayısal satırın tamamı bu tanımlarla 7 ondalık basamağa kadar uyumludur.
+
+## 3. Davranış
 
 ```gherkin
 Feature: χ² olumsallık tablosu güç analizi (chi2-contingency)
@@ -150,7 +161,7 @@ Feature: χ² olumsallık tablosu güç analizi (chi2-contingency)
       | --w abc verilir                        | INVALID_VALUE |
 ```
 
-## 3. Sözleşme ile G*Power'ın ayrıştığı yerler
+## 4. Sözleşme ile G*Power'ın ayrıştığı yerler
 
 Gizli vektörler sözleşmeye göre çalıştırıldığı için CLI **sözleşmeye** uyar. G*Power'ın farklı davrandığı yerler aşağıda; her biri hocaya sorulacak ve README'de belirtilecek.
 
@@ -163,7 +174,8 @@ Gizli vektörler sözleşmeye göre çalıştırıldığı için CLI **sözleşm
 | S4b | power = α | kabul, N 1 (id 28) | — | S2'ye bağlı |
 | S5 | compromise / criterion / sensitivity | oracle yok | sözleşmede tanımlı | bu sürümde `UNSUPPORTED`; ödev a priori + post hoc istiyor |
 | S6 | 0 < α ≤ 1e-07 | hata (aralık 1e-07'den başlıyor) | α ∈ (0, 1) | G*Power'a uyulur: `OUT_OF_RANGE` (TODO: X11 ile doğrulanacak) |
+| S7 | a priori N, 2147483646'yı aşar (ör. w 0.00001, α 0.05, power 0.80, df 1 → yaklaşık 7.8 × 10¹⁰) | **BELİRSİZ** (oracle X13 bekleniyor) | sözleşmede `NO_SOLUTION` kodu var | geçici karar: `NO_SOLUTION`, field `n_total`, çıkış kodu 2 |
 
-## 4. Açık TODO'lar
+## 5. Açık TODO'lar
 - R1–R9 (LEDGER.md): REA ile binary kanıtı.
 - Determine paneli (oranlardan w): oracle id 29, 30 yalnızca girdiyi gösteriyor; panelin hesapladığı w görülmedi (D01b, D02b bekleniyor). CLI w'yi doğrudan aldığı için motorun kapsamında değil; ajan katmanında kullanılabilir.
