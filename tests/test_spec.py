@@ -166,7 +166,7 @@ INVALID = [
     # SPEC section 4 decisions
     ("S1", "a-priori", "df", "1.5", "INVALID_VALUE"),
     ("S2", "post-hoc", "n_total", "1", "OUT_OF_RANGE"),
-    ("S3", "a-priori", "w", "1e-06", "OUT_OF_RANGE"),
+    ("S3", "a-priori", "w", "0.0000009", "OUT_OF_RANGE"),
     ("S6", "a-priori", "alpha", "1e-07", "OUT_OF_RANGE"),
 ]
 
@@ -183,6 +183,37 @@ def test_invalid_input_rejected(oid, mode, field, value, want):
     assert set(data) == {"error", "code", "field"}
     assert data["code"] == want and data["field"] == field
     assert isinstance(data["error"], str) and data["error"]
+
+
+# --- Scenario: w alt sınırına tam eşitse kabul edilir (SPEC update 1, S3) -------
+def test_w_below_lower_bound_rejected():
+    code, data, _ = apriori("0.0000009", "0.05", "0.80", 1)
+    assert code == 2 and data["code"] == "OUT_OF_RANGE" and data["field"] == "w"
+
+
+def test_w_at_lower_bound_accepted_posthoc():
+    # SPEC update 2: post-hoc, w = 1e-06 → exit 0, ncp = 1e-09, power ≈ alpha.
+    code, data, _ = posthoc("0.000001", "0.05", 1000, 1)
+    assert code == 0
+    assert set(data) == {"ncp", "critical_chi2", "power"}
+    assert math.isclose(data["ncp"], 1e-9, rel_tol=1e-12)
+    assert approx(data["critical_chi2"], 3.8414588)
+    assert data["power"] >= 0.05 and approx(data["power"], 0.05)
+
+
+# --- Scenario: Çok büyük a priori N üst sınıra takılmaz (SPEC update 3, S7) ----
+def test_huge_apriori_n_has_no_upper_bound():
+    code, data, out = apriori("0.000001", "0.05", "0.80", 1)
+    assert code == 0
+    n = data["n_total"]
+    assert isinstance(n, int) and '"n_total": %d,' % n in out   # JSON integer, not 7.8e12
+    assert f"{n:.5g}" == f"{7.8489e12:.5g}"
+    assert approx(data["ncp"], 7.8488605)
+    assert approx(data["actual_power"], 0.8000000)
+    assert approx(data["critical_chi2"], 3.8414588)
+    # still the minimal integer (A3)
+    assert engine.power_at(1e-6, 0.05, 1, n) >= 0.80
+    assert engine.power_at(1e-6, 0.05, 1, n - 1) < 0.80
 
 
 # --- Scenario: Hedef güç α'dan küçük ------------------------------------------
@@ -211,9 +242,28 @@ def test_s5_other_modes_unsupported():
     assert code == 2 and data["code"] == "UNSUPPORTED" and data["field"] == "mode"
 
 
-def test_s7_n_beyond_limit_no_solution():
+def test_s7_old_limit_example_now_computes():
+    # Old S7 example (~7.8e10 > 2147483646) is now a normal result.
     code, data, _ = apriori("0.00001", "0.05", "0.80", 1)
+    assert code == 0 and data["n_total"] > 2147483646
+
+
+def test_s7_posthoc_n_total_still_bounded():
+    code, data, _ = posthoc("0.3", "0.05", 2147483647, 1)
+    assert code == 2 and data["code"] == "OUT_OF_RANGE" and data["field"] == "n_total"
+
+
+def test_s7_beyond_2_pow_53_no_solution():
+    # SPEC: N > 2**53 is BELİRSİZ; our decision is NO_SOLUTION, field n_total.
+    code, data, _ = apriori("0.000001", "0.05", "0.80", 100000000)
     assert code == 2 and data["code"] == "NO_SOLUTION" and data["field"] == "n_total"
+
+
+def test_numerical_failure_is_internal_error_json():
+    # scipy's noncentral chi2 CDF returns NaN for df >= ~1e11: exit 1, JSON, no traceback.
+    code, data, _ = posthoc("0.3", "0.05", 100, 1000000000000)
+    assert code == 1
+    assert set(data) == {"error", "code", "field"}
 
 
 def test_s2_apriori_never_below_contract_minimum():

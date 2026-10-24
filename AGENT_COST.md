@@ -34,10 +34,12 @@
 | Araç çağrısı | 35 |
 | Commit | 3 (motor+CLI+paket, testler, notlar+rapor) |
 | Sonuç | ilk denemede oracle 27/27, N 13/13, ölçek 1050/1050 |
+| SPEC güncellemesi turları | 3 tur (S3, senaryo düzeltmesi, S7), toplam ~8 dk, ~30 bin token; son durum oracle 28/28, N 14/14, 50 test |
 
 ### Takıldığı yerler
 - `scipy.stats` içe aktarması tek başına ~1 sn sürüyordu (2 sn sınırının yarısı). `scipy.special`'a geçilince süre ~0.4 sn'ye düştü.
 - PATH'teki `pytest` ayrı bir ortamda kurulu olduğu için paketi göremedi; testler `python -m pytest` ile çalıştırıldı.
 
 ### Neyi farklı yapardık
+- Sınır vektörlerini her iki modda (a priori ve post hoc) baştan almak. S7 hatası (H10) tesadüfen yakalandı.
 - Çağrı süresi sınırını SPEC'e bir senaryo olarak eklemek. Sorunu test değil, elle yapılan ölçüm yakaladı.

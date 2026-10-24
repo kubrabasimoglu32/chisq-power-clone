@@ -14,16 +14,16 @@
 
 | öğe | değer |
 |---|---|
-| G*Power oracle vektörü | 30 satır, her biri ekran görüntüsüyle (`oracle/`) |
-| └ sayısal sonuç | 21 (15 a priori, 6 post hoc) |
+| G*Power oracle vektörü | 31 satır, her biri ekran görüntüsüyle (`oracle/`) |
+| └ sayısal sonuç | 22 (16 a priori, 6 post hoc) |
 | └ geçersiz girdi | 7 (G*Power hata mesajlarıyla) |
 | └ Determine paneli | 2 (yalnızca girdi; w henüz görülmedi) |
-| scipy sanity uyumu | 21/21, 7 basamak (`tests/uyum_raporu.md`) |
+| scipy sanity uyumu | 22/22, 7 basamak (`tests/uyum_raporu.md`) |
 | Ölçek vektörü (statsmodels) | 1050 (`oracle/scale_statsmodels.csv`); 4'ünde statsmodels çözüm bulamadı |
-| [REA] kanıtı | R5a kanıtlandı (`FUN_004880e0`: power ≥ α kontrolü, eşitlik kabul); 5 hata dizesi daha adresli (R5b–f) (`LEDGER.md`) |
-| CLI diferansiyel testi | oracle 27/27 geçti; **N tam eşleşme 13/13 = %100** (kapı ≥ %90) (`tests/uyum_raporu_cli.md`) |
+| [REA] kanıtı | **2 kanıtlandı:** R5a (`FUN_004880e0`: power ≥ α, eşitlik kabul), R5e (`FUN_00487880`: w < sınır → hata, **eşitlik kabul**, kılavuzda yok). 4 hata dizesi daha adresli; ortak doğrulayıcı (79 çağrı) ve parametre adı tablosu (`LEDGER.md`) |
+| CLI diferansiyel testi | oracle 28/28 geçti; **N tam eşleşme 14/14 = %100** (kapı ≥ %90) (`tests/uyum_raporu_cli.md`) |
 | CLI ölçek testi | 1050/1050 = %100 |
-| SPEC birim testleri | 44/44 (`tests/test_spec.py`) |
+| SPEC birim testleri | 50/50 (`tests/test_spec.py`) |
 | Bilinen sapma | id 12 ve 28: G*Power N = 1, CLI N = 2 (sözleşme alt sınırı 2; SPEC §4 S2) |
 
 ## Kurulum
@@ -45,7 +45,7 @@ Komut adı `gpower-clone` sözleşme gereğidir; bu proje G*Power değildir ve o
 
 Testler:
 ```
-python -m pytest -q                          # SPEC senaryoları (44 test)
+python -m pytest -q                          # SPEC senaryoları (50 test)
 python tests/test_differential.py            # CLI ↔ G*Power oracle (kapı: N ≥ %90 tam eşleşme)
 python tests/test_differential.py --scale    # + 1050 ölçek vektörü
 python tests/sanity_chi2.py                  # oracle CSV ↔ scipy (kâhin değil)
@@ -59,6 +59,7 @@ G*Power'ın kesirli df'yi kabul etmesi, N = 1'e izin vermesi gibi farklar `SPEC.
 - **Oturum 1 (inceleme):** G*Power ekranlarından oracle, SPEC.md ve LEDGER.md üretti. Motor kodu yazmadı. İlk prompt: `prompts/oturum1_inceleme.md`.
 - **Oturum 2 (yazım):** Ayrı bir ajan, yalıtılmış bir klasörde yalnızca SPEC.md, oracle CSV'leri ve CLI'ı çağıran test düzeneğiyle çalıştı. LEDGER'ı ve inceleme betiklerini görmedi. İlk prompt: `prompts/oturum2_yazim.md`, notları: `prompts/oturum2_notlar.md`.
 - Yalıtım dosya sistemi izniyle değil talimatla sağlandı; ajan klasör dışına bakmadığını raporladı.
+- **REA geri besleme döngüsü:** Ghidra bulguları (R5e) ve yeni oracle (31) SPEC'i üç kez değiştirdi. Oturum 2'ye her seferinde yalnızca SPEC farkı iletildi, Ghidra çıktısı iletilmedi. Oturum 2 bu süreçte SPEC'teki bir çelişkiyi yakaladı (HALLUCINATIONS H9). Geçmiş: `klon-oturum2` deposunun 10 commit'i, `prompts/oturum2_notlar.md`.
 
 ## REA ve Ghidra kontrolü
 

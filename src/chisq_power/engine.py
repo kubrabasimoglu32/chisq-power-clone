@@ -25,16 +25,29 @@ MODES = ("a-priori", "post-hoc")
 UNSUPPORTED_MODES = ("compromise", "criterion", "sensitivity")
 
 # Admissible ranges (SPEC.md sections 3 and 4).
-W_MIN_EXCLUSIVE = 1e-6          # S3: w must be greater than 1e-06
+W_MIN = 1e-6                    # S3 (SPEC update 1): error only if w < 1e-06; w = 1e-06 is valid
 ALPHA_MIN_EXCLUSIVE = 1e-7      # S6: alpha in (1e-07, 1)
 N_MIN = 2                       # S2: contract lower bound for n_total
-N_MAX = 2147483646              # S7: largest admissible sample size
+N_MAX = 2147483646              # oracle 26: upper bound for a post-hoc n_total input only
+# S7 (SPEC update 3): the a-priori result has no upper bound.  Above 2**53 a
+# double can no longer hold every integer, so ncp = w**2 * N and the power
+# comparison stop being exact.  SPEC marks that case BELİRSİZ; we stop the
+# search there and report NO_SOLUTION rather than print an N we cannot vouch for.
+N_APRIORI_LIMIT = 2 ** 53
 
 REQUIRED = {
     "a-priori": ("w", "alpha", "power", "df"),
     "post-hoc": ("w", "alpha", "n_total", "df"),
 }
 ALL_FIELDS = ("test", "mode", "w", "alpha", "power", "n_total", "df")
+
+
+class NumericalError(ArithmeticError):
+    """The distribution routines returned a non-finite value (exit code 1).
+
+    Not an input error: e.g. scipy's noncentral chi-square CDF returns NaN
+    for df >= ~1e11, a limit of the library rather than of the SPEC.
+    """
 
 
 class EngineError(Exception):
@@ -59,12 +72,18 @@ def noncentrality(w: float, n: int) -> float:
 
 def critical_value(alpha: float, df: int) -> float:
     """Upper-alpha point of the central chi-square(df) distribution."""
-    return float(chdtri(df, alpha))
+    return _finite(float(chdtri(df, alpha)), "critical value")
 
 
 def _sf(x: float, df: int, ncp: float) -> float:
     """P(X > x) for X ~ noncentral chi-square(df, ncp)."""
-    return float(1.0 - chndtr(x, df, ncp))
+    return _finite(float(1.0 - chndtr(x, df, ncp)), "power")
+
+
+def _finite(value: float, what: str) -> float:
+    if not math.isfinite(value):
+        raise NumericalError(f"Numerical failure: {what} is not finite for these inputs.")
+    return value
 
 
 def power_at(w: float, alpha: float, df: int, n: int) -> float:
@@ -83,10 +102,11 @@ def post_hoc(w: float, alpha: float, n_total: int, df: int) -> Dict[str, Any]:
 
 
 def a_priori(w: float, alpha: float, power: float, df: int) -> Dict[str, Any]:
-    """Smallest integer N in [N_MIN, N_MAX] with power(N) >= target.
+    """Smallest integer N >= N_MIN with power(N) >= target (no upper bound, S7).
 
     Power is strictly increasing in N, so an exponential search followed by
     an integer bisection finds the exact minimum without any rounding rule.
+    Both phases take O(log N) steps: N ~ 7.8e12 needs ~85 evaluations.
     """
     crit = critical_value(alpha, df)
 
@@ -99,17 +119,12 @@ def a_priori(w: float, alpha: float, power: float, df: int) -> Dict[str, Any]:
     else:
         # Exponential search for an upper bracket: pw(lo) < power <= pw(hi).
         hi = lo * 2
-        while True:
-            if hi >= N_MAX:
-                hi = N_MAX
-                if pw(hi) < power:
-                    raise EngineError(
-                        "NO_SOLUTION", "n_total",
-                        f"Required sample size exceeds the maximum of {N_MAX}.")
-                break
-            if pw(hi) >= power:
-                break
-            lo, hi = hi, hi * 2
+        while pw(hi) < power:
+            if hi >= N_APRIORI_LIMIT:
+                raise EngineError(
+                    "NO_SOLUTION", "n_total",
+                    "Required sample size exceeds 2**53 and cannot be computed exactly.")
+            lo, hi = hi, min(hi * 2, N_APRIORI_LIMIT)
         # Invariant: pw(lo) < power <= pw(hi).
         while hi - lo > 1:
             mid = (lo + hi) // 2
@@ -203,8 +218,9 @@ def validate(params: Mapping[str, Any]) -> Dict[str, Any]:
 
     # Range checks.
     w = typed["w"]
-    if not w > W_MIN_EXCLUSIVE:
-        raise EngineError("OUT_OF_RANGE", "w", "Effect size w must be greater than 1e-06.")
+    if not w >= W_MIN:
+        raise EngineError("OUT_OF_RANGE", "w",
+                          "Effect size w must be greater than or equal to 1e-06.")
     alpha = typed["alpha"]
     if not (ALPHA_MIN_EXCLUSIVE < alpha < 1):
         raise EngineError("OUT_OF_RANGE", "alpha",

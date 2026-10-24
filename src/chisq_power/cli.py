@@ -68,14 +68,20 @@ def main(argv: Optional[List[str]] = None) -> int:
         return EXIT_OK
     try:
         result = engine.run(parse_args(argv))
+        line = json.dumps(result, allow_nan=False)
     except engine.EngineError as exc:
         _emit(exc.to_dict())
         return EXIT_INVALID
+    except engine.NumericalError as exc:
+        print(f"internal error: {exc}", file=sys.stderr)
+        _emit({"error": str(exc), "code": "INTERNAL", "field": None})
+        return EXIT_INTERNAL
     except Exception as exc:  # pragma: no cover - defensive
         print(f"internal error: {exc!r}", file=sys.stderr)
         _emit({"error": "Internal error.", "code": "INTERNAL", "field": None})
         return EXIT_INTERNAL
-    _emit(result)
+    sys.stdout.write(line + "\n")
+    sys.stdout.flush()
     return EXIT_OK
 
 
