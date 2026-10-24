@@ -49,3 +49,9 @@ Ajan: Claude Opus 5.5. H1–H4 Oturum 1 (inceleme), H5–H7 Oturum 2 (yazım). H
 - **Nasıl fark edildi:** Ghidra'da mesajı kuran `FUN_00487880` açıldı. Hata koşulu `değer < sınır`, yani eşitlik kabul ediliyor.
 - **Hangi kontrol yakaladı:** REA/Ghidra incelemesi (LEDGER R5e). Diferansiyel test yakalayamazdı, çünkü oracle'da w = 1e-06 vektörü yoktu. Mesaj metnine güvenmek, kodun davranışına güvenmekle aynı şey değil.
 - **Düzeltme:** SPEC S3 ve yeni senaryo güncellendi. Klonun düzeltilmesi Oturum 2'ye yalnızca SPEC değişikliği olarak iletilecek. X10 oracle'ı (w = 0.000001) çapraz doğrulama için istendi.
+
+## H9 — Kendi içinde çelişkili SPEC senaryosu (Oturum 1)
+- **Ne dendi:** H8 düzeltmesi yapılırken SPEC'e "a priori, w = 1e-06 → çıkış 0, normal N" senaryosu eklendi. Kullanıcıya da "N yaklaşık 7.8 milyar çıkar" denildi.
+- **Nasıl fark edildi:** Oturum 2 ajanı senaryoyu uygularken gereken N'nin yaklaşık 7.85 × 10¹² olduğunu (7.8 milyar değil, 7.8 trilyon) ve bunun S7'deki N üst sınırını aştığını gösterdi. Senaryo, S7'nin istediği NO_SOLUTION ile çelişiyordu. Ajan değer uydurmadı; testi strict xfail olarak işaretleyip kararı geri sordu.
+- **Hangi kontrol yakaladı:** Temiz oda oturumu. SPEC'i yalnızca metin olarak okuyan bağımsız ajan, iki kuralın birlikte sağlanamayacağını fark etti.
+- **Düzeltme:** Senaryo post hoc moduna taşındı (w = 1e-06, N = 1000 → w hatası yok). X10 oracle vektörü de post hoc olarak değiştirildi.

@@ -145,10 +145,12 @@ Feature: χ² olumsallık tablosu güç analizi (chi2-contingency)
 
   # [REA] R5e — FUN_00487880: hata yalnızca w < alt sınır (1e-06) iken; eşitlik geçerli
   Scenario: w alt sınırına tam eşitse kabul edilir
-    When "--mode a-priori --w 0.000001 --alpha 0.05 --power 0.80 --df 1" çalıştırılır
-    Then çıkış kodu 0'dır (hata değil)
-    And n_total, güç ≥ 0.80 koşulunu sağlayan en küçük tam sayıdır
+    When "--mode post-hoc --w 0.000001 --alpha 0.05 --n_total 1000 --df 1" çalıştırılır
+    Then çıkış kodu 0'dır (w hatası yok)
+    And power, α'ya çok yakın bir değerdir (ncp = 1e-09)
     # w = 0.0000009 ise → OUT_OF_RANGE, field "w"
+    # Not: a priori modda w = 1e-06 ile gereken N ≈ 7.85 × 10¹² olduğundan S7 (NO_SOLUTION) devreye girer;
+    # bu çelişki değildir: w kontrolü geçer, ardından N üst sınırı kontrolü hata verir.
 
   # [REA] R5a (FUN_004880e0: power ≥ α değilse hata) — hata kodu seçimi bizim kararımız (S4)
   Scenario: Hedef güç α'dan küçük
