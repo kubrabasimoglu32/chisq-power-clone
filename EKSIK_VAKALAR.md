@@ -2,7 +2,7 @@
 
 Test: **χ² tests → Goodness-of-fit tests: Contingency tables**
 
-Alınan: 30 görsel (`oracle/chisq_gof.csv`, id 1–30). **Kalan: 3 görsel.**
+Alınan: 31 görsel (`oracle/chisq_gof.csv`, id 1–30). **Kalan: 3 görsel.**
 
 ## Kalan
 
@@ -23,8 +23,6 @@ Alınan: 30 görsel (`oracle/chisq_gof.csv`, id 1–30). **Kalan: 3 görsel.**
 
 | dosya adı | Type | w | α | Power / N | Df | neyi sınar |
 |---|---|---|---|---|---|---|
-| X10.png | **Post hoc** | 0.000001 | 0.05 | N = 1000 | 1 | w = 1e-06 kabul ediliyor mu? (REA R5e: evet bekleniyor; güç ≈ 0.05) |
 | X11.png | A priori | 0.3 | 0.0000001 | 0.80 | 1 | α alt sınırı tam 1e-07'de hata mı? |
 | X12.png | A priori | 0.3 | 0.05 | 0.80 | 0.5 | Df < 1 kesirli → hata mı? |
 | C15.png | A priori | 0.3 | 0.05 | 0.80 | 2.5 | kesirli Df ikinci örnek |
-| X13.png | A priori | 0.00001 | 0.05 | 0.80 | 1 | N üst sınırı (2147483646) aşılınca ne olur? **Önemli** (SPEC S7) |

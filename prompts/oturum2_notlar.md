@@ -39,3 +39,18 @@ Davranış yalnızca `SPEC.md`'den öğrenildi; klasör dışına bakılmadı.
 - **BELİRSİZ (N > 2⁵³) için kararım:** arama 2⁵³'te durur → `NO_SOLUTION`, field `n_total`, çıkış 2. Bu sınırın üstünde double her tam sayıyı tutamadığı için ncp = w²N ve "en küçük N" kesin olmaktan çıkar. Gerçekte w ≥ 1e-06 ve power < 1 ile buraya ancak çok büyük df ile ulaşılıyor (ör. df 1e8).
 - **Bu sırada bulunan hata (önceden vardı, halüsinasyon sayılır):** `scipy.special.chndtr` df ≳ 1e11'de NaN döndürüyor. NaN aramada fark edilmiyordu ve CLI `json.dumps` hatasıyla traceback verip stdout'u boş bırakıyordu (çıkış 1, JSON yok). df = 1e12 ile elle denerken yakalandı. Artık sonlu olmayan her ara değer `NumericalError` → çıkış 1, `{"error","code":"INTERNAL","field":null}`. SPEC df için üst sınır tanımlamadığından bunu girdi hatası değil iç hata saydım.
 - Testler: eski "a-priori w=1e-06 → NO_SOLUTION" ve "S7 → NO_SOLUTION" testleri yeni senaryoya göre değişti. Eklenenler: post-hoc n_total sınırı, 2⁵³ kararı, NaN → iç hata JSON'u. Ölçek vektörleri yeni aramayla motordan tekrar kontrol edildi: 1050/1050.
+
+## SPEC güncellemesi 4 (MCP, §6)
+- **Ortak giriş noktası:** `src/chisq_power/service.py` → `execute(params) -> Outcome(status, payload)` ve `to_json`. CLI'daki "sonuç/hata nesnesi üret + JSON'a çevir" kısmı buraya taşındı; CLI ve MCP ikisi de yalnızca bunu çağırıyor. scipy yalnızca `engine.py`'de.
+- **`mcp_server.py`:** resmî SDK (mcp 2.3.0, düşük seviye `Server`, stdio). Tek araç `chi2_contingency_power`. Başarıda `content[0].text` = CLI stdout satırı, `structuredContent` = aynı nesne. Hatada aynı hata nesnesi ve `isError: true`.
+- **Karar:** girdi şeması `tools/list`'te yayınlanıyor ama SDK'ya doğrulatılmıyor (`get_tool_input_schema` verilmedi). Aksi hâlde `df: 1.5` gibi girdiler motora ulaşmadan SDK hatasıyla dönerdi ve CLI ile eşdeğerlik bozulurdu.
+- **Karar:** JSON `null` → alan yok sayılır. Şemada olmayan alan motora iletilir → `UNKNOWN_PARAM` (CLI ile aynı). `test` araç adından çıkarılır.
+- **Halüsinasyon / takılma:** mcp 2.x'te `FastMCP` kaldırılmış (`MCPServer` olmuş) ve alan adları snake_case (`structured_content`, `is_error`). v1 alışkanlığıyla yazmadan önce SDK kaynağına bakarak doğrulandı. İlk stdio testinde `anyio.fail_after` olay döngüsü dışında çağrıldığı için `NoEventLoopError` aldım; pytest yakaladı, döngünün içine taşındı.
+- `requires-python` ≥ 3.10'a çekildi (mcp SDK gereği).
+- `oracle/chisq_gof.csv` çalışma kopyasında commit'lenmemiş bir değişiklik var: yalnızca `kaynak` sütunu (`?` → `grup1`), değerler aynı (csv ile alan alan karşılaştırıldı). Dosya 11:51'de, benim bu adımımdan önce değişmiş; ben yazmadım. Koordinatöre ait sayıp commit'lerime katmadım. `git diff HEAD~1` çalışma kopyasıyla karşılaştırdığı için ilk bakışta "güncelleme 4"ün parçası sanmıştım.
+- Testler: `tests/test_mcp.py`:
+  - 38 eşdeğerlik vakası: 29 oracle satırının tamamı, §6'nın 4 örneği ve 5 sözleşme vakası (eksik, bilinmeyen, bozuk, UNSUPPORTED, INTERNAL);
+  - gerçek stdio istemcisi;
+  - mimari testleri.
+  
+  Toplam pytest: 95 geçti.

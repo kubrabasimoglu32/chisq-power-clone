@@ -7,7 +7,7 @@
 | katman | durum |
 |---|---|
 | Temel: motor + CLI | ✅ tamam (`src/chisq_power/`), temiz oda Oturum 2'de yazıldı |
-| Bonus: MCP sunucusu | ❌ yapılmadı |
+| Bonus: MCP sunucusu | ✅ tamam: `gpower-clone-mcp`, tek araç `chi2_contingency_power` (şema: `MCP.md`) |
 | Bonus: AI ajanı | ❌ yapılmadı |
 
 ## Durum özeti
@@ -23,7 +23,8 @@
 | [REA] kanıtı | **2 kanıtlandı:** R5a (`FUN_004880e0`: power ≥ α, eşitlik kabul), R5e (`FUN_00487880`: w < sınır → hata, **eşitlik kabul**, kılavuzda yok). 4 hata dizesi daha adresli; ortak doğrulayıcı (79 çağrı) ve parametre adı tablosu (`LEDGER.md`) |
 | CLI diferansiyel testi | oracle 28/28 geçti; **N tam eşleşme 14/14 = %100** (kapı ≥ %90) (`tests/uyum_raporu_cli.md`) |
 | CLI ölçek testi | 1050/1050 = %100 |
-| SPEC birim testleri | 50/50 (`tests/test_spec.py`) |
+| SPEC + MCP testleri | 95/95 (`tests/test_spec.py`, `tests/test_mcp.py`) |
+| CLI ↔ MCP eşdeğerliği | 38/38 vaka birebir aynı JSON (oracle'ın tüm sayısal ve hata satırları dahil); gerçek stdio istemcisiyle de sınandı |
 | Bilinen sapma | id 12 ve 28: G*Power N = 1, CLI N = 2 (sözleşme alt sınırı 2; SPEC §4 S2) |
 
 ## Kurulum
@@ -45,12 +46,18 @@ Komut adı `gpower-clone` sözleşme gereğidir; bu proje G*Power değildir ve o
 
 Testler:
 ```
-python -m pytest -q                          # SPEC senaryoları (50 test)
+python -m pytest -q                          # SPEC + MCP testleri (95 test)
 python tests/test_differential.py            # CLI ↔ G*Power oracle (kapı: N ≥ %90 tam eşleşme)
 python tests/test_differential.py --scale    # + 1050 ölçek vektörü
 python tests/sanity_chi2.py                  # oracle CSV ↔ scipy (kâhin değil)
 python tests/gen_scale_statsmodels.py        # ölçek vektörlerini yeniden üretir
 ```
+
+### MCP sunucusu
+```
+gpower-clone-mcp        # stdio MCP sunucusu; Claude Desktop yapılandırması MCP.md'de
+```
+Araç `chi2_contingency_power` girdi olarak `mode, w, alpha, power | n_total, df` alır ve CLI'ın aynı girdide yazdığı JSON'u birebir döndürür. Hata durumunda aynı hata nesnesini `isError: true` ile döndürür. Mimari: `engine.py` (tek hesap motoru) ← `service.py` (ortak giriş) ← `cli.py` ve `mcp_server.py` (ince katmanlar). scipy yalnızca motorda; bunu mimari testleri denetliyor.
 
 ### Sözleşmeden G*Power'a göre bilinçli sapmalar
 G*Power'ın kesirli df'yi kabul etmesi, N = 1'e izin vermesi gibi farklar `SPEC.md` §4'te (S1–S7) listelenmiştir. CLI sözleşmeye uyar.
@@ -76,7 +83,7 @@ Ghidra sağlayıcısı ayrıca sorulduğunda gelen cevap:
 ## Sürüm bilgisi
 - Referans: G*Power 3.1.9.7 (Windows), yalnızca resmi sayfadan (psychologie.hhu.de)
 - GPower.exe SHA-256: _(doldurulacak — PowerShell: `Get-FileHash .\GPower.exe -Algorithm SHA256`)_
-- Bu repo: v0.2 (Oturum 1: inceleme · Oturum 2: motor + CLI)
+- Bu repo: v0.3 (Oturum 1: inceleme · Oturum 2: motor + CLI + MCP)
 
 ## Demo video
 _(60 saniyelik CLI videosu — eklenecek)_
@@ -90,7 +97,9 @@ AGENT_COST.md      ajan maliyet ve süreç günlüğü
 EKSIK_VAKALAR.md   G*Power'da alınacak kalan vektörler
 prompts/           iki oturumun ilk prompt'ları
 oracle/            G*Power vektörleri (CSV) + ekran görüntüleri + ölçek vektörleri
-src/chisq_power/   engine.py (tek hesap motoru) + cli.py (ince katman) — Oturum 2
+src/chisq_power/   engine.py (tek hesap motoru) ← service.py ← cli.py, mcp_server.py — Oturum 2
+MCP.md             MCP araç şeması ve yapılandırma
+demo/demo.ps1      60 saniyelik CLI demosu
 tests/             diferansiyel test, sanity kontrolü, uyum raporları
 ```
 

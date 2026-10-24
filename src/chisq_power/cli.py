@@ -9,11 +9,10 @@ to stderr.  Exit codes: 0 success, 2 invalid input, 1 internal error.
 """
 from __future__ import annotations
 
-import json
 import sys
 from typing import Dict, List, Optional
 
-from . import engine
+from . import engine, service
 
 USAGE = (
     "usage: gpower-clone --test chi2-contingency --mode a-priori "
@@ -22,12 +21,7 @@ USAGE = (
     "--w W --alpha A --n_total N --df DF"
 )
 
-EXIT_OK, EXIT_INTERNAL, EXIT_INVALID = 0, 1, 2
-
-
-def _emit(obj: Dict) -> None:
-    sys.stdout.write(json.dumps(obj, allow_nan=False) + "\n")
-    sys.stdout.flush()
+EXIT_OK = service.OK
 
 
 def parse_args(argv: List[str]) -> Dict[str, str]:
@@ -67,22 +61,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(USAGE, file=sys.stderr)
         return EXIT_OK
     try:
-        result = engine.run(parse_args(argv))
-        line = json.dumps(result, allow_nan=False)
+        params = parse_args(argv)
     except engine.EngineError as exc:
-        _emit(exc.to_dict())
-        return EXIT_INVALID
-    except engine.NumericalError as exc:
-        print(f"internal error: {exc}", file=sys.stderr)
-        _emit({"error": str(exc), "code": "INTERNAL", "field": None})
-        return EXIT_INTERNAL
-    except Exception as exc:  # pragma: no cover - defensive
-        print(f"internal error: {exc!r}", file=sys.stderr)
-        _emit({"error": "Internal error.", "code": "INTERNAL", "field": None})
-        return EXIT_INTERNAL
-    sys.stdout.write(line + "\n")
+        outcome = service.Outcome(service.INVALID, exc.to_dict())
+    else:
+        outcome = service.execute(params)
+    sys.stdout.write(service.to_json(outcome.payload) + "\n")
     sys.stdout.flush()
-    return EXIT_OK
+    return outcome.status
 
 
 if __name__ == "__main__":  # pragma: no cover
