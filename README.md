@@ -87,7 +87,7 @@ Ghidra sağlayıcısı ayrıca sorulduğunda gelen cevap:
 - Bu repo: v0.3 (Oturum 1: inceleme · Oturum 2: motor + CLI + MCP)
 
 ## Demo video
-_(60 saniyelik CLI videosu — eklenecek)_
+https://youtu.be/tbmPOeM1CI8 (60 saniyelik CLI demosu: a priori, post hoc, sözleşme örneği, geçersiz girdi ve G*Power oracle'ına karşı diferansiyel test; betik `demo/demo.ps1`)
 
 ## Repo yapısı
 ```
