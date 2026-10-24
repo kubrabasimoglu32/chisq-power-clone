@@ -69,7 +69,11 @@ REA (`npx rea-agents setup`) Gemini ajanına kayıtlı olarak kuruldu. Ajana "RE
 
 ![REA kontrolü](docs/rea_kontrol.png) _(ekran görüntüsü eklenecek)_
 
-**Not:** Cevap Ghidra sağlayıcısının durumunu ayrıca belirtmiyor. LEDGER'daki [REA] satırları REA ajanı üzerinden değil, Ghidra CodeBrowser'da (proje `gpower`, binary `GPowerNT.exe`) elle bulundu: String Search, XREF listeleri ve Decompile paneli. Her satırda adres ve kısa alıntı var; aynı adımlarla tekrar üretilebilir.
+Ghidra sağlayıcısı ayrıca sorulduğunda gelen cevap:
+
+> Ghidra sağlayıcısı ise şu anda yüklü ya da kaydedilmiş bir MCP aracı olarak listede yer almıyor. Ghidra‑özel komutları ya da doğrudan Ghidra entegrasyonu bu oturumda kullanılamaz; ancak aynı anda kullanılabilecek diğer native analiz araçları (rizin, radare2‑tabanlı araçlar, inspect_binary_layout, inspect_native_* gibi) mevcuttur.
+
+**Sonuç:** REA kurulu ve native analiz araçları (rizin/radare2) çalışıyor; REA'nın Ghidra sağlayıcısı bağlı değil. LEDGER'daki [REA] satırları REA ajanı üzerinden değil, Ghidra CodeBrowser'da (proje `gpower`, binary `GPowerNT.exe`) elle bulundu: String Search, XREF listeleri ve Decompile paneli. Her satırda adres ve kısa alıntı var; aynı adımlarla tekrar üretilebilir.
 
 ## Sürüm bilgisi
 - Referans: G*Power 3.1.9.7 (Windows), yalnızca resmi sayfadan (psychologie.hhu.de)
