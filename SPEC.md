@@ -194,3 +194,46 @@ Gizli vektörler sözleşmeye göre çalıştırıldığı için CLI **sözleşm
 ## 5. Açık TODO'lar
 - R1–R9 (LEDGER.md): REA ile binary kanıtı.
 - Determine paneli (oranlardan w): oracle id 29, 30 yalnızca girdiyi gösteriyor; panelin hesapladığı w görülmedi (D01b, D02b bekleniyor). CLI w'yi doğrudan aldığı için motorun kapsamında değil; ajan katmanında kullanılabilir.
+
+## 6. MCP sunucusu (bonus katman)
+
+Yönerge: "Aynı motoru çağıran ince bir adaptör; hesap mantığı MCP katmanına kopyalanmaz."
+
+### Sözleşme
+- **Komut:** `gpower-clone-mcp`. stdio taşıması, Model Context Protocol.
+- **Tek araç:** `chi2_contingency_power`.
+- **Girdi şeması:**
+
+| alan | tip | zorunlu | açıklama |
+|---|---|---|---|
+| `mode` | string, `"a-priori"` \| `"post-hoc"` | evet | analiz modu |
+| `w` | number | evet | Cohen w |
+| `alpha` | number | evet | I. tip hata |
+| `power` | number | a-priori'de evet | hedef güç |
+| `n_total` | integer | post-hoc'ta evet | toplam örneklem |
+| `df` | integer | evet | serbestlik derecesi |
+
+- **Başarılı dönüş:** CLI'ın aynı girdide stdout'a yazdığı JSON nesnesinin **birebir aynısı** (aynı alanlar, aynı değerler).
+- **Hatalı girdi:** CLI'ın hata JSON'u (`error`, `code`, `field`) ile birebir aynı nesne; MCP sonucu hata olarak işaretlenir (`isError: true`).
+- **Mimari:** MCP katmanı hesap yapmaz. Girdiyi CLI ile aynı doğrulama ve motor yoluna verir. Hesap mantığının tek yeri motordur.
+
+```gherkin
+Feature: MCP adaptörü CLI ile aynı sonucu verir
+
+  Scenario Outline: CLI ve MCP eşdeğerliği
+    Given CLI'a ve MCP aracına aynı girdi verilir: <girdi>
+    Then iki çıktı JSON olarak birebir aynıdır
+    Examples:
+      | girdi                                                                 |
+      | a-priori, w 0.3, alpha 0.05, power 0.95, df 5   (sözleşme örneği, N 220) |
+      | post-hoc, w 0.3, alpha 0.05, n_total 88, df 1                          |
+      | a-priori, w 0, alpha 0.05, power 0.80, df 1     (OUT_OF_RANGE)         |
+      | a-priori, w 0.3, alpha 0.05, power 0.04, df 1   (INCONSISTENT)         |
+    # Ek olarak: oracle/chisq_gof.csv'deki her sayısal ve hata satırı için CLI ↔ MCP eşdeğerliği.
+
+  Scenario: Gerçek stdio istemcisi
+    Given gpower-clone-mcp bir alt süreç olarak başlatılır
+    When bir MCP istemcisi araç listesini ister ve chi2_contingency_power'ı çağırır
+    Then araç listede görünür ve sonuç CLI çıktısıyla aynıdır
+```
+
