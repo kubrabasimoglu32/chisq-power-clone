@@ -8,7 +8,6 @@
 |---|---|
 | Temel: motor + CLI | ✅ tamam (`src/chisq_power/`), temiz oda Oturum 2'de yazıldı |
 | Bonus: MCP sunucusu | ✅ tamam: `gpower-clone-mcp`, tek araç `chi2_contingency_power` (şema: `MCP.md`) |
-| Bonus: AI ajanı | ❌ yapılmadı |
 
 ## Durum özeti
 
