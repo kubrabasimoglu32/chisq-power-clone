@@ -1,6 +1,18 @@
 ﻿# 60 saniyelik CLI demosu — PowerShell
 # Kullanım (repo klasöründe):  powershell -ExecutionPolicy Bypass -File demo\demo.ps1
 
+# --- Hazırlık: komut PATH'te yoksa doğrudan Python modülü olarak çalıştır ---
+Set-Location (Join-Path $PSScriptRoot "..")
+$env:PYTHONPATH = (Join-Path (Get-Location) "src")
+python -c "import scipy" 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "scipy kurulu değil. Önce şunu çalıştırın:  python -m pip install -e ." -ForegroundColor Red
+    exit 1
+}
+if (-not (Get-Command gpower-clone -ErrorAction SilentlyContinue)) {
+    function global:gpower-clone { python -m chisq_power.cli @args }
+}
+
 function Show($cmd, $note) {
     Write-Host ""
     Write-Host "# $note" -ForegroundColor DarkGray
