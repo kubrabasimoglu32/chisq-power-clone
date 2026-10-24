@@ -11,6 +11,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 if (-not (Get-Command gpower-clone -ErrorAction SilentlyContinue)) {
     function global:gpower-clone { python -m chisq_power.cli @args }
+    $env:GPOWER_CLONE = "python -m chisq_power.cli"   # tests/test_differential.py için
 }
 
 function Show($cmd, $note) {
