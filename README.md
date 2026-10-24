@@ -67,8 +67,6 @@ REA (`npx rea-agents setup`) Gemini ajanına kayıtlı olarak kuruldu. Ajana "RE
 
 > REA (Reverse‑Engineer‑Anything) araçları bu oturumda mevcuttur. reverse‑engineer‑anything skill'inin tanım dosyası (`C:\Users\kubra\.gemini\config\skills\reverse-engineer-anything\SKILL.md`) bulunuyor; bu sayede REA'nın sunduğu statik analiz, dekompilasyon ve karşılaştırma işlevlerini doğrudan çağırabilirsiniz.
 
-![REA kontrolü](docs/rea_kontrol.png) _(ekran görüntüsü eklenecek)_
-
 Ghidra sağlayıcısı ayrıca sorulduğunda gelen cevap:
 
 > Ghidra sağlayıcısı ise şu anda yüklü ya da kaydedilmiş bir MCP aracı olarak listede yer almıyor. Ghidra‑özel komutları ya da doğrudan Ghidra entegrasyonu bu oturumda kullanılamaz; ancak aynı anda kullanılabilecek diğer native analiz araçları (rizin, radare2‑tabanlı araçlar, inspect_binary_layout, inspect_native_* gibi) mevcuttur.
