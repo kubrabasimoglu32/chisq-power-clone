@@ -43,3 +43,9 @@ Ajan: Claude Opus 5.5. H1–H4 Oturum 1 (inceleme), H5–H7 Oturum 2 (yazım). H
 - **Nasıl fark edildi:** `ModuleNotFoundError: chisq_power`. PATH'teki pytest ayrı bir yorumlayıcıya bağlı bir araçtı.
 - **Hangi kontrol yakaladı:** Testin ilk çalıştırılması.
 - **Düzeltme:** README'de komut `python -m pytest -q` olarak yazıldı.
+
+## H8 — "Mesaj 'greater' diyorsa eşitlik reddedilir" çıkarımı (Oturum 1 → Oturum 2'ye taşındı)
+- **Ne dendi:** G*Power'ın "Effect size w must be greater 1e-06." mesajından w = 1e-06'nın da reddedildiği çıkarıldı. SPEC S3'e "0 < w ≤ 1e-06 → hata" yazıldı. Klon (Oturum 2) bunu uyguladı: "eşik dahil reddedilir, 'greater 1e-06' ifadesine göre".
+- **Nasıl fark edildi:** Ghidra'da mesajı kuran `FUN_00487880` açıldı. Hata koşulu `değer < sınır`, yani eşitlik kabul ediliyor.
+- **Hangi kontrol yakaladı:** REA/Ghidra incelemesi (LEDGER R5e). Diferansiyel test yakalayamazdı, çünkü oracle'da w = 1e-06 vektörü yoktu. Mesaj metnine güvenmek, kodun davranışına güvenmekle aynı şey değil.
+- **Düzeltme:** SPEC S3 ve yeni senaryo güncellendi. Klonun düzeltilmesi Oturum 2'ye yalnızca SPEC değişikliği olarak iletilecek. X10 oracle'ı (w = 0.000001) çapraz doğrulama için istendi.

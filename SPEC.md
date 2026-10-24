@@ -143,6 +143,13 @@ Feature: χ² olumsallık tablosu güç analizi (chi2-contingency)
       | 26        | post-hoc | n_total | 0     | OUT_OF_RANGE | "Total sample size is outside the admissible range" |
       | — (X05)   | a-priori | power   | 1     | OUT_OF_RANGE | oracle bekleniyor                                   |
 
+  # [REA] R5e — FUN_00487880: hata yalnızca w < alt sınır (1e-06) iken; eşitlik geçerli
+  Scenario: w alt sınırına tam eşitse kabul edilir
+    When "--mode a-priori --w 0.000001 --alpha 0.05 --power 0.80 --df 1" çalıştırılır
+    Then çıkış kodu 0'dır (hata değil)
+    And n_total, güç ≥ 0.80 koşulunu sağlayan en küçük tam sayıdır
+    # w = 0.0000009 ise → OUT_OF_RANGE, field "w"
+
   # [REA] R5a (FUN_004880e0: power ≥ α değilse hata) — hata kodu seçimi bizim kararımız (S4)
   Scenario: Hedef güç α'dan küçük
     When "--mode a-priori --w 0.3 --alpha 0.05 --power 0.04 --df 1" çalıştırılır
@@ -169,7 +176,7 @@ Gizli vektörler sözleşmeye göre çalıştırıldığı için CLI **sözleşm
 |---|---|---|---|---|
 | S1 | kesirli df (1.5) | hesaplar: N 99, güç 0.8030493 (id 27) | df tam sayı ≥ 1 | `INVALID_VALUE`, field `df` |
 | S2 | N = 1 | post hoc'ta kabul eder (id 19); a priori N = 1 döndürebilir (id 12, 28) | n_total tam sayı ≥ 2 | post-hoc `n_total 1` → `OUT_OF_RANGE`. A priori sonucun 1 çıktığı durum **BELİRSİZ** (G*Power 1 diyor, sözleşme alt sınırı 2) |
-| S3 | 0 < w ≤ 1e-06 | hata | w > 0 | G*Power'a uyulur: `OUT_OF_RANGE` (TODO: X10 ile eşik doğrulanacak) |
+| S3 | w'nin alt sınırı | **[REA] R5e:** `FUN_00487880` hata koşulu `w < 1e-06`; **w = 1e-06 kabul edilir** (mesaj "greater" dese de) | w > 0 | G*Power'a uyulur: `w < 1e-06` → `OUT_OF_RANGE`; `w = 1e-06` geçerli girdidir (TODO: X10 oracle ile çapraz doğrulama) |
 | S4 | power < α | Input error (id 13) | aralık (0, 1), özel kural yok | `INCONSISTENT`, field `power` |
 | S4b | power = α | kabul, N 1 (id 28) | — | S2'ye bağlı |
 | S5 | compromise / criterion / sensitivity | oracle yok | sözleşmede tanımlı | bu sürümde `UNSUPPORTED`; ödev a priori + post hoc istiyor |
