@@ -42,7 +42,26 @@ Kaynak: G*Power 3.1 kılavuzu, "Goodness-of-fit tests: Contingency tables" böl�
 | A11 | Determine paneli: "Number of cells", hücre başına p(H0)/p(H1), "Equal", "Normalize", "Auto calc last cell", "Calculate", "Calculate and transfer to main window" düğmeleri var | 2/2 | 29, 30 | gözlem. Panelin w hesaplaması henüz görülmedi |
 | A12 | Ölçek: statsmodels'in kesirli N'sinin yukarı yuvarlanmışı, scipy taramasıyla bulunan en küçük tam sayı N'ye eşittir (G*Power davranışı A3 ile uyumlu) | 1046/1046 (4 vektörde statsmodels çözüm bulamadı; hepsinde gerçek N = 2) | `oracle/scale_statsmodels.csv` | tutuyor. Kâhin değil; G*Power ile yalnızca 15 a priori satırda doğrulandı |
 
-## [REA] Binary kanıtı — boş şablon (REA oturumu dolduracak)
+## [REA] Binary kanıtı
+
+İncelenen binary: `GPowerNT.exe` (G*Power 3.1.9.7), Ghidra projesi `gpower`. Arama: Search → For Strings (min. uzunluk 5, 3984 dize). Decompile çıktısı bu dosyaya konmaz; yalnızca adres ve kısa alıntı.
+
+### R5 — Girdi doğrulama dizeleri
+
+Durum sütunu: **DİZE** = dize binary'de bulundu, ekrandaki mesajla eşleşti. **XREF** = dizeyi kullanan fonksiyon da bulundu (henüz bekliyor).
+
+| id | iddia | dize adresi | alıntı (binary) | oracle | durum |
+|---|---|---|---|---|---|
+| R5a | power < α hatası | `005c6220` | `"Power must be greater than or equal to alpha."` | 13 | DİZE ✓ · XREF bekliyor |
+| R5b | Df < 1 hatası | `005c615c` | `"Degrees of Freedom must be greater or equal one."` | 25 | DİZE ✓ · XREF bekliyor |
+| R5c | α aralık hatası; sınırlar dizede yok, çalışma anında ekleniyor | `005c6100` | `"Alpha is outside the admissible range ("` | 23, 24 | DİZE ✓ (önek) · XREF ve sabitler (1e-07, 1) bekliyor |
+| R5d | N aralık hatası; sınırlar çalışma anında ekleniyor | `005c6524` | `"Total sample size is outside the admissible range ("` | 26 | DİZE ✓ (önek) · XREF ve sabit (2147483646) bekliyor |
+| R5e | w alt sınır hatası; mesaj parçalardan birleştiriliyor | `005c55a8` + `005c61c4` | `"Effect size w"` + `" must be greater "` | 21, 22 | DİZE ✓ (parçalar) · XREF ve sabit (1e-06) bekliyor |
+| R5f | power aralık hatası (X05 için beklenen mesaj) | `005c60d8` | `"Power is outside the admissible range ("` | — | DİZE ✓ · oracle X05 ve XREF bekliyor |
+
+**Bulgu (kılavuzda yok):** Aralık hatalarında sınır değerleri dize içinde değil. Mesaj "önek + sayılar + ')'" biçiminde çalışma anında birleştiriliyor. w mesajı da genel bir `" must be greater "` parçasıyla kuruluyor; bu parça başka testlerle ortak. Ekrandaki "greater 1e-06." yazımındaki eksik "than" bu birleştirmeden kaynaklanıyor.
+
+### Bekleyen
 
 | id | iddia | fonksiyon adresi / dize ref | alıntı | durum |
 |---|---|---|---|---|
@@ -50,8 +69,7 @@ Kaynak: G*Power 3.1 kılavuzu, "Goodness-of-fit tests: Contingency tables" böl�
 | R2 | Kritik χ²'nin hesaplandığı yer (ters χ² dağılımı) | | | TODO |
 | R3 | Merkezi olmayan χ² CDF yöntemi ve hassasiyeti | | | TODO |
 | R4 | A priori N arama yöntemi, alt sınır (N=1) ve tam sayıya yuvarlama | | | TODO |
-| R5 | Girdi doğrulama dizeleri (ekranda görüldü, binary'de aranacak): "Power must be greater than or equal to alpha." (13), "Effect size w must be greater 1e-06." (21, 22), "Alpha is outside the admissible range" (23, 24), "Degrees of Freedom must be greater or equal one." (25), "Total sample size is outside the admissible range" (26) | | | TODO |
+| R6 | Determine penceresinde oranlardan w hesabı | | | TODO |
+| R7 | "Effect size conventions" ipucu dizesi | | | TODO |
 | R8 | Kesirli Df'nin neden kabul edildiği (Df alanının tipi; float mu?) | | | TODO |
 | R9 | N üst sınırı 2147483646 (int32 sınırı −1?) | | | TODO |
-| R6 | Determine penceresinde oranlardan w hesabı | | | TODO |
-| R7 | "Effect size conventions" ipucu dizesi (id 11, 14) | | | TODO |

@@ -20,7 +20,7 @@
 | └ Determine paneli | 2 (yalnızca girdi; w henüz görülmedi) |
 | scipy sanity uyumu | 21/21, 7 basamak (`tests/uyum_raporu.md`) |
 | Ölçek vektörü (statsmodels) | 1050 (`oracle/scale_statsmodels.csv`); 4'ünde statsmodels çözüm bulamadı |
-| [REA] kanıtı | 0/9, şablon hazır (`LEDGER.md`) |
+| [REA] kanıtı | 6 hata dizesi binary'de bulundu (R5a–f, adresli); fonksiyon referansları bekleniyor (`LEDGER.md`) |
 | CLI diferansiyel testi | oracle 27/27 geçti; **N tam eşleşme 13/13 = %100** (kapı ≥ %90) (`tests/uyum_raporu_cli.md`) |
 | CLI ölçek testi | 1050/1050 = %100 |
 | SPEC birim testleri | 44/44 (`tests/test_spec.py`) |
