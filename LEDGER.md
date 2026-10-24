@@ -68,6 +68,8 @@ Ek referanslar (aynı Listing ekranından):
 
 Doğrulama fonksiyonları `0x00487a40`–`0x00488700` aralığında kümeleniyor: ortak bir girdi doğrulama modülü olması muhtemel ([AJAN], decompile ile sınanacak).
 
+**Parametre adı tablosu:** `005c55a8` "Effect size w" dizesine kod doğrudan erişmiyor; tek referansı `00609400(*)` adresindeki bir işaretçi. Bu işaretçi, `PTR_s_Number_of_groups_006093f0` ile başlayan bir işaretçi dizisinin 4. elemanı: [0] "Number of groups", [1] "Denominator df", [2] "Numerator df", [3] "M", [4] "Effect size w", [5] "Effect size d", [6] "Effect size f^2". Dizinin başına 14 fonksiyondan referans var (`FUN_0050e460`, `FUN_00512f80`, `FUN_00513720`, `FUN_0051d200`, `FUN_0051d660`, `FUN_0051fbe0`, `FUN_00521280`, `FUN_00521780`, `FUN_00522300`, `FUN_00522990`; bazıları iki kez). Parametre adları testler arasında paylaşılan bir tablodan sıra numarasıyla seçiliyor ([AJAN] yorumu: hata mesajı = `tablo[i]` + `" must be greater "` + sınır; doğrulayıcı fonksiyonla sınanacak).
+
 **Bulgu (kılavuzda yok):** Aralık hatalarında sınır değerleri dize içinde değil. Mesaj "önek + sayılar + ')'" biçiminde çalışma anında birleştiriliyor. w mesajı da genel bir `" must be greater "` parçasıyla kuruluyor; bu parça başka testlerle ortak. Ekrandaki "greater 1e-06." yazımındaki eksik "than" bu birleştirmeden kaynaklanıyor.
 
 ### Bekleyen
