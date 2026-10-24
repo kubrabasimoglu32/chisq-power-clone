@@ -2,7 +2,7 @@
 
 Etiketler: `[DOK]` kılavuzda geçen · `[AJAN]` ajanın çıkarımı, binary kanıtı yok · `[REA]` binary'den kanıtlı (yalnızca REA oturumu doldurur).
 
-Oracle: 30 satır (`oracle/chisq_gof.csv`). 15 a priori sonuç (1–12, 14, 27, 28), 6 post hoc sonuç (15–20), 7 Input error (13, 21–26), 2 Determine paneli (29, 30; w hesaplanmamış). Sayısal sonuç veren 21 satırın 21'i scipy ile 7 basamak aynı.
+Oracle: 31 satır (`oracle/chisq_gof.csv`). 15 a priori sonuç (1–12, 14, 27, 28), 6 post hoc sonuç (15–20), 7 Input error (13, 21–26), 2 Determine paneli (29, 30; w hesaplanmamış). Sayısal sonuç veren 21 satırın 21'i scipy ile 7 basamak aynı.
 
 ## [DOK] Kılavuz bilgisi
 Kaynak: G*Power 3.1 kılavuzu, "Goodness-of-fit tests: Contingency tables" bölümü; Faul ve ark. (2007). Sayfa numaraları **BELİRSİZ**, kılavuzdan eklenecek.
@@ -41,6 +41,8 @@ Kaynak: G*Power 3.1 kılavuzu, "Goodness-of-fit tests: Contingency tables" böl�
 | A10 | Kesirli Df kabul edilir ve sürekli Df ile hesaplanır (Df=1.5 → N 99; scipy kesirli df ile birebir) | 1/1 | 27 | tutuyor. Kılavuzla çelişip çelişmediği BELİRSİZ |
 | A11 | Determine paneli: "Number of cells", hücre başına p(H0)/p(H1), "Equal", "Normalize", "Auto calc last cell", "Calculate", "Calculate and transfer to main window" düğmeleri var | 2/2 | 29, 30 | gözlem. Panelin w hesaplaması henüz görülmedi |
 | A12 | Ölçek: statsmodels'in kesirli N'sinin yukarı yuvarlanmışı, scipy taramasıyla bulunan en küçük tam sayı N'ye eşittir (G*Power davranışı A3 ile uyumlu) | 1046/1046 (4 vektörde statsmodels çözüm bulamadı; hepsinde gerçek N = 2) | `oracle/scale_statsmodels.csv` | tutuyor. Kâhin değil; G*Power ile yalnızca 15 a priori satırda doğrulandı |
+| A13 | **A priori N'nin üst sınırı yok:** w 1e-06 için N = 7.8489e+12 hesaplanır. 2147483646 sınırı yalnızca post hoc'ta girilen N için geçerli | 1/1 | 31 (+ 26) | tutuyor. scipy en küçük N = 7848860509327, 5 basamakta aynı |
+| A14 | Büyük N ekranda 5 anlamlı basamakla, bilimsel gösterimle yazılır (7.8489e+12); λ ve güç 7 ondalıkla | 1/1 | 31 | gözlem |
 
 ## [REA] Binary kanıtı
 
@@ -56,7 +58,7 @@ Durum sütunu: **DİZE** = dize binary'de bulundu, ekrandaki mesajla eşleşti. 
 | R5b | Df < 1 hatası | `005c615c` | `"Degrees of Freedom must be greater or equal one."` | 25 | DİZE ✓ · XREF bekliyor |
 | R5c | α aralık hatası; sınırlar dizede yok, çalışma anında ekleniyor | `005c6100` | `"Alpha is outside the admissible range ("` | 23, 24 | DİZE ✓ (önek) · XREF ve sabitler (1e-07, 1) bekliyor |
 | R5d | N aralık hatası; sınırlar çalışma anında ekleniyor | `005c6524` | `"Total sample size is outside the admissible range ("` | 26 | DİZE ✓ (önek) · XREF ve sabit (2147483646) bekliyor |
-| R5e | Etki büyüklüğü alt sınır kontrolü: hata yalnızca **değer < sınır**; **eşitlik kabul** (kılavuzda yok, mesaj metniyle çelişiyor) | `005c61c4` → **`FUN_00487880`** (`PUSH s_must_be_greater` @ `00487903`) | `if (in_stack_0000001c < in_stack_00000024) { ... "Effect size " ... " must be greater " ... }` | 21, 22 | **KANITLANDI** · sınır sabitinin (1e-06) çağıran fonksiyondaki değeri bekliyor |
+| R5e | Etki büyüklüğü alt sınır kontrolü (oracle 31 ile çapraz doğrulandı: w = 1e-06 kabul): hata yalnızca **değer < sınır**; **eşitlik kabul** (kılavuzda yok, mesaj metniyle çelişiyor) | `005c61c4` → **`FUN_00487880`** (`PUSH s_must_be_greater` @ `00487903`) | `if (in_stack_0000001c < in_stack_00000024) { ... "Effect size " ... " must be greater " ... }` | 21, 22 | **KANITLANDI** · sınır sabitinin (1e-06) çağıran fonksiyondaki değeri bekliyor |
 | R5f | power aralık hatası (X05 için beklenen mesaj) | `005c60d8` | `"Power is outside the admissible range ("` | — | DİZE ✓ · oracle X05 ve XREF bekliyor |
 
 Ek referanslar (aynı Listing ekranından):
@@ -85,4 +87,4 @@ Doğrulama fonksiyonları `0x00487a40`–`0x00488700` aralığında kümeleniyor
 | R6 | Determine penceresinde oranlardan w hesabı | | | TODO |
 | R7 | "Effect size conventions" ipucu dizesi | | | TODO |
 | R8 | Kesirli Df'nin neden kabul edildiği (Df alanının tipi; float mu?) | | | TODO |
-| R9 | N üst sınırı 2147483646 (int32 sınırı −1?) | | | TODO |
+| R9 | N üst sınırı 2147483646 yalnızca girdi doğrulamasında (post hoc); a priori sonuç sınırsız (oracle 31). Girdi kontrolü `005c6524` dizesiyle | | | TODO (sabitin yeri) |

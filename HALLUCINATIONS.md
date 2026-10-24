@@ -55,3 +55,9 @@ Ajan: Claude Opus 5.5. H1–H4 Oturum 1 (inceleme), H5–H7 Oturum 2 (yazım). H
 - **Nasıl fark edildi:** Oturum 2 ajanı senaryoyu uygularken gereken N'nin yaklaşık 7.85 × 10¹² olduğunu (7.8 milyar değil, 7.8 trilyon) ve bunun S7'deki N üst sınırını aştığını gösterdi. Senaryo, S7'nin istediği NO_SOLUTION ile çelişiyordu. Ajan değer uydurmadı; testi strict xfail olarak işaretleyip kararı geri sordu.
 - **Hangi kontrol yakaladı:** Temiz oda oturumu. SPEC'i yalnızca metin olarak okuyan bağımsız ajan, iki kuralın birlikte sağlanamayacağını fark etti.
 - **Düzeltme:** Senaryo post hoc moduna taşındı (w = 1e-06, N = 1000 → w hatası yok). X10 oracle vektörü de post hoc olarak değiştirildi.
+
+## H10 — "N üst sınırı a priori sonucu da sınırlar" varsayımı (Oturum 1)
+- **Ne dendi:** Post hoc'taki "Total sample size is outside the admissible range (1, 2147483646)" mesajından, a priori'de bu sınırı aşan sonucun da hata vereceği çıkarıldı. SPEC S7'ye "aşarsa NO_SOLUTION" yazıldı ve klon böyle davrandı. H9 düzeltmesi de bu yanlış kurala dayanarak yapıldı.
+- **Nasıl fark edildi:** X10 vektörü yanlışlıkla a priori modunda girildi. G*Power hata vermedi, N = 7.8489e+12 hesapladı (oracle 31).
+- **Hangi kontrol yakaladı:** Oracle (G*Power ekranı). Sınır değer vektörünün öngörülen moddan farklı girilmesi tesadüfen kuralı çürüttü. Bu da sınır vektörlerinin her iki modda alınması gerektiğini gösteriyor.
+- **Düzeltme:** SPEC S7 ve yeni senaryo; LEDGER A13–A14; test düzeneği büyük N'yi ekrandaki 5 anlamlı basamakla karşılaştırıyor.

@@ -105,7 +105,10 @@ def check_row(r):
     if code != 0 or not data:
         return "KALDI", False, f"kod {code}, çıktı {data}"
     if r["mod"] == "apriori":
-        n_ok = data.get("n_total") == int(r["total_n"])
+        if "e" in r["total_n"]:  # ekran büyük N'yi %.5g gösteriyor: o hassasiyette karşılaştır
+            n_ok = isinstance(data.get("n_total"), int) and f"{data['n_total']:.5g}" == f"{float(r['total_n']):.5g}"
+        else:
+            n_ok = data.get("n_total") == int(r["total_n"])
         checks = {"n_total": n_ok,
                   "actual_power": close(data.get("actual_power"), r["actual_power"]),
                   "critical_chi2": close(data.get("critical_chi2"), r["critical_chi2"]),

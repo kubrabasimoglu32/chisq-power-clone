@@ -149,8 +149,14 @@ Feature: χ² olumsallık tablosu güç analizi (chi2-contingency)
     Then çıkış kodu 0'dır (w hatası yok)
     And power, α'ya çok yakın bir değerdir (ncp = 1e-09)
     # w = 0.0000009 ise → OUT_OF_RANGE, field "w"
-    # Not: a priori modda w = 1e-06 ile gereken N ≈ 7.85 × 10¹² olduğundan S7 (NO_SOLUTION) devreye girer;
-    # bu çelişki değildir: w kontrolü geçer, ardından N üst sınırı kontrolü hata verir.
+
+  # [REA] R5e + oracle 31 · S7
+  Scenario: Çok büyük a priori N üst sınıra takılmaz
+    When "--mode a-priori --w 0.000001 --alpha 0.05 --power 0.80 --df 1" çalıştırılır
+    Then çıkış kodu 0'dır
+    And n_total bir JSON tam sayısıdır ve 5 anlamlı basamakta 7.8489e+12'dir
+    And ncp ≈ 7.8488605, actual_power ≈ 0.8000000, critical_chi2 ≈ 3.8414588
+    # G*Power ekranı N'yi 5 anlamlı basamakla gösterir; tam tamsayı oracle'dan okunamaz.
 
   # [REA] R5a (FUN_004880e0: power ≥ α değilse hata) — hata kodu seçimi bizim kararımız (S4)
   Scenario: Hedef güç α'dan küçük
@@ -183,7 +189,7 @@ Gizli vektörler sözleşmeye göre çalıştırıldığı için CLI **sözleşm
 | S4b | power = α | kabul, N 1 (id 28) | — | S2'ye bağlı |
 | S5 | compromise / criterion / sensitivity | oracle yok | sözleşmede tanımlı | bu sürümde `UNSUPPORTED`; ödev a priori + post hoc istiyor |
 | S6 | 0 < α ≤ 1e-07 | hata (aralık 1e-07'den başlıyor) | α ∈ (0, 1) | G*Power'a uyulur: `OUT_OF_RANGE` (TODO: X11 ile doğrulanacak) |
-| S7 | a priori N, 2147483646'yı aşar (ör. w 0.00001, α 0.05, power 0.80, df 1 → yaklaşık 7.8 × 10¹⁰) | **BELİRSİZ** (oracle X13 bekleniyor) | sözleşmede `NO_SOLUTION` kodu var | geçici karar: `NO_SOLUTION`, field `n_total`, çıkış kodu 2 |
+| S7 | a priori N çok büyük (ör. w 0.000001, α 0.05, power 0.80, df 1) | **hesaplar:** N = 7.8489e+12, λ 7.8488605, güç 0.8000000 (oracle 31). **A priori sonuç için 2147483646 üst sınırı yok**; o sınır yalnızca post hoc'ta girilen N için geçerli (oracle 26) | n_total tam sayı | a priori: normal sonuç ver, `n_total` tam sayı (JSON integer). N > 2⁵³ (≈ 9 × 10¹⁵) davranışı BELİRSİZ |
 
 ## 5. Açık TODO'lar
 - R1–R9 (LEDGER.md): REA ile binary kanıtı.

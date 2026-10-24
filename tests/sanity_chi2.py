@@ -16,7 +16,7 @@ def power(w, a, df, n):
     return ncx2.sf(chi2.isf(a, df), df, w * w * n)
 
 
-def apriori_n(w, a, p, df, n_max=10_000_000):
+def apriori_n(w, a, p, df, n_max=10**16):
     lo, hi = 1, 1
     while power(w, a, df, hi) < p:
         hi *= 2
@@ -50,11 +50,17 @@ def main():
         try:
             w, a, df = float(r["w"]), float(r["alpha"]), float(r["df"])
             if r["mod"] == "apriori":
-                g = int(float(r["total_n"]))
                 s = apriori_n(w, a, float(r["power"]), df)
-                d = None if s is None else s - g
-                ok = d == 0
-                gs, ss = str(g), str(s)
+                if "e" in r["total_n"]:  # ekran büyük N'yi %.5g gösteriyor
+                    g = r["total_n"]
+                    ok = s is not None and f"{s:.5g}" == f"{float(g):.5g}"
+                    d = "—" if ok else "≠"
+                    gs, ss = g, f"{s} (≈{s:.5g})"
+                else:
+                    g = int(float(r["total_n"]))
+                    d = None if s is None else s - g
+                    ok = d == 0
+                    gs, ss = str(g), str(s)
             else:
                 g_str = r["actual_power"]
                 g = float(g_str)
@@ -76,7 +82,8 @@ def main():
     for r in rows:
         if not r["actual_power"]:
             continue
-        w, a, df, n = float(r["w"]), float(r["alpha"]), float(r["df"]), int(float(r["total_n"]))
+        w, a, df = float(r["w"]), float(r["alpha"]), float(r["df"])
+        n = apriori_n(w, a, float(r["power"]), df) if "e" in r["total_n"] else int(float(r["total_n"]))
         c = chi2.isf(a, df)
         lines.append(f"| {r['id']} | {r['lambda']} | {w*w*n:.7f} | {r['critical_chi2']} | {c:.7f} | "
                      f"{r['actual_power']} | {power(w, a, df, n):.7f} | {power(w, a, df, n-1):.7f} | {r['power']} |")
