@@ -52,12 +52,19 @@ Durum sütunu: **DİZE** = dize binary'de bulundu, ekrandaki mesajla eşleşti. 
 
 | id | iddia | dize adresi | alıntı (binary) | oracle | durum |
 |---|---|---|---|---|---|
-| R5a | power < α hatası | `005c6220` | `"Power must be greater than or equal to alpha."` | 13 | DİZE ✓ · XREF bekliyor |
+| R5a | power < α hatası | `005c6220` → **`FUN_004880e0`** (XREF[1]) | `"Power must be greater than or equal to alpha."` | 13 | DİZE ✓ · XREF ✓ · karşılaştırma koşulu bekliyor |
 | R5b | Df < 1 hatası | `005c615c` | `"Degrees of Freedom must be greater or equal one."` | 25 | DİZE ✓ · XREF bekliyor |
 | R5c | α aralık hatası; sınırlar dizede yok, çalışma anında ekleniyor | `005c6100` | `"Alpha is outside the admissible range ("` | 23, 24 | DİZE ✓ (önek) · XREF ve sabitler (1e-07, 1) bekliyor |
 | R5d | N aralık hatası; sınırlar çalışma anında ekleniyor | `005c6524` | `"Total sample size is outside the admissible range ("` | 26 | DİZE ✓ (önek) · XREF ve sabit (2147483646) bekliyor |
 | R5e | w alt sınır hatası; mesaj parçalardan birleştiriliyor | `005c55a8` + `005c61c4` | `"Effect size w"` + `" must be greater "` | 21, 22 | DİZE ✓ (parçalar) · XREF ve sabit (1e-06) bekliyor |
 | R5f | power aralık hatası (X05 için beklenen mesaj) | `005c60d8` | `"Power is outside the admissible range ("` | — | DİZE ✓ · oracle X05 ve XREF bekliyor |
+
+Ek referanslar (aynı Listing ekranından):
+- `005c61d8` `" is outside the admissible range ("` → XREF[2]: `FUN_00487b70`, `FUN_00488200` (genel aralık mesajı, birden çok doğrulayıcı kullanıyor)
+- `005c61fc` `" is inside the prohibited range ("` → XREF[1]: `FUN_00487a40`
+- `005c6250` `"Sample size must be greater than or equal to "` → XREF[1]: `FUN_00488700`
+
+Doğrulama fonksiyonları `0x00487a40`–`0x00488700` aralığında kümeleniyor: ortak bir girdi doğrulama modülü olması muhtemel ([AJAN], decompile ile sınanacak).
 
 **Bulgu (kılavuzda yok):** Aralık hatalarında sınır değerleri dize içinde değil. Mesaj "önek + sayılar + ')'" biçiminde çalışma anında birleştiriliyor. w mesajı da genel bir `" must be greater "` parçasıyla kuruluyor; bu parça başka testlerle ortak. Ekrandaki "greater 1e-06." yazımındaki eksik "than" bu birleştirmeden kaynaklanıyor.
 
