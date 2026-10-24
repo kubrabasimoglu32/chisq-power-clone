@@ -46,7 +46,7 @@ Kaynak: G*Power 3.1 kılavuzu, "Goodness-of-fit tests: Contingency tables" böl�
 
 ## [REA] Binary kanıtı
 
-İncelenen binary: `GPowerNT.exe` (G*Power 3.1.9.7), Ghidra projesi `gpower`. Arama: Search → For Strings (min. uzunluk 5, 3984 dize). Decompile çıktısı bu dosyaya konmaz; yalnızca adres ve kısa alıntı.
+İncelenen binary: `GPowerNT.exe` (G*Power 3.1.9.7), SHA-256 `C63E6A133EB6372932F810C08CC33DC35A06D1DDB658F897BD6C34A754EFC812`, Ghidra projesi `gpower`. Arama: Search → For Strings (min. uzunluk 5, 3984 dize). Decompile çıktısı bu dosyaya konmaz; yalnızca adres ve kısa alıntı.
 
 ### R5 — Girdi doğrulama dizeleri
 

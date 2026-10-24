@@ -82,7 +82,8 @@ Ghidra sağlayıcısı ayrıca sorulduğunda gelen cevap:
 
 ## Sürüm bilgisi
 - Referans: G*Power 3.1.9.7 (Windows), yalnızca resmi sayfadan (psychologie.hhu.de)
-- GPower.exe SHA-256: _(doldurulacak — PowerShell: `Get-FileHash .\GPower.exe -Algorithm SHA256`)_
+- İncelenen binary: `GPowerNT.exe` (G*Power 3.1.9.7 paketindeki asıl çalıştırılabilir dosya)
+- SHA-256: `C63E6A133EB6372932F810C08CC33DC35A06D1DDB658F897BD6C34A754EFC812` (PowerShell `Get-FileHash .\GPowerNT.exe -Algorithm SHA256`, 2026-10-24)
 - Bu repo: v0.3 (Oturum 1: inceleme · Oturum 2: motor + CLI + MCP)
 
 ## Demo video
