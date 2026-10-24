@@ -63,9 +63,13 @@ G*Power'ın kesirli df'yi kabul etmesi, N = 1'e izin vermesi gibi farklar `SPEC.
 
 ## REA ve Ghidra kontrolü
 
-Ajana "REA araçları ve Ghidra sağlayıcısı bu oturumda kullanılabilir mi?" sorusunun cevabı:
+REA (`npx rea-agents setup`) Gemini ajanına kayıtlı olarak kuruldu. Ajana "REA araçları ve Ghidra sağlayıcısı bu oturumda kullanılabilir mi?" diye soruldu. Cevap (2026-10-24):
+
+> REA (Reverse‑Engineer‑Anything) araçları bu oturumda mevcuttur. reverse‑engineer‑anything skill'inin tanım dosyası (`C:\Users\kubra\.gemini\config\skills\reverse-engineer-anything\SKILL.md`) bulunuyor; bu sayede REA'nın sunduğu statik analiz, dekompilasyon ve karşılaştırma işlevlerini doğrudan çağırabilirsiniz.
 
 ![REA kontrolü](docs/rea_kontrol.png) _(ekran görüntüsü eklenecek)_
+
+**Not:** Cevap Ghidra sağlayıcısının durumunu ayrıca belirtmiyor. LEDGER'daki [REA] satırları REA ajanı üzerinden değil, Ghidra CodeBrowser'da (proje `gpower`, binary `GPowerNT.exe`) elle bulundu: String Search, XREF listeleri ve Decompile paneli. Her satırda adres ve kısa alıntı var; aynı adımlarla tekrar üretilebilir.
 
 ## Sürüm bilgisi
 - Referans: G*Power 3.1.9.7 (Windows), yalnızca resmi sayfadan (psychologie.hhu.de)

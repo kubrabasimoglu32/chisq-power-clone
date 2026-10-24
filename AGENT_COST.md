@@ -11,7 +11,7 @@
 | Okunan görsel | 30 G*Power ekran görüntüsü |
 | Token | **Tahmini**, ölçülmedi: görsel başına ~1–1.5 bin token × 30 ≈ 40 bin; metin ve araç çağrılarıyla toplam yaklaşık 200–300 bin. Kesin değer kullanım ekranından doldurulacak. |
 | Maliyet | BELİRSİZ, kullanım ekranından doldurulacak |
-| REA / Ghidra | Bu oturumda kullanılmadı. [REA] satırları boş şablon. |
+| REA / Ghidra | REA, Gemini ajanına kuruldu (kontrol cevabı README'de). Kanıtlar Ghidra CodeBrowser'da elle toplandı; ajan, kullanıcının gönderdiği ekran görüntülerini okuyup LEDGER'a işledi (2026-10-24, ~30 dk, ~15 ekran görüntüsü). |
 
 ### Ne işe yaradı
 - Vektörleri önceden kodlu dosya adlarıyla (C01, P01, X01) planlamak: görseller ile CSV satırlarının eşleştirilmesi kolaylaştı.
