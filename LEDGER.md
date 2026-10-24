@@ -64,7 +64,7 @@ Ek referanslar (aynı Listing ekranından):
 - `005c61fc` `" is inside the prohibited range ("` → XREF[1]: `FUN_00487a40`
 - `005c6250` `"Sample size must be greater than or equal to "` → XREF[1]: `FUN_00488700`
 
-**R5a ayrıntı:** `FUN_004880e0(this, double, double)` iki ondalık alır, `param_2 <= param_3` ise 1 döndürür. Parametre rolleri (param_2 = α, param_3 = power) mesaj metninden çıkarıldı. Eşitlik kabul edildiği için oracle id 28 (power = α → hesaplar, N 1) binary ile tutarlı. `FUN_00437db0(this+0x2b0, mesaj)` ortak hata bildirim fonksiyonu gibi görünüyor ([AJAN]; referans listesiyle sınanacak).
+**R5a ayrıntı:** `FUN_004880e0(this, double, double)` iki ondalık alır, `param_2 <= param_3` ise 1 döndürür. Parametre rolleri (param_2 = α, param_3 = power) mesaj metninden çıkarıldı. Eşitlik kabul edildiği için oracle id 28 (power = α → hesaplar, N 1) binary ile tutarlı. `FUN_004880e0`'a **79 çağrı** var (References to FUN_004880e0, hepsi UNCONDITIONAL_CALL; ilki `00497e14`, liste `004c26ea` ötesine uzanıyor). power ≥ α kontrolü testlere özgü değil, bütün test pencerelerinin paylaştığı tek bir doğrulayıcı. `FUN_00437db0(this+0x2b0, mesaj)` ortak hata bildirim fonksiyonu gibi görünüyor ([AJAN]; referans listesiyle sınanacak).
 
 Doğrulama fonksiyonları `0x00487a40`–`0x00488700` aralığında kümeleniyor: ortak bir girdi doğrulama modülü olması muhtemel ([AJAN], decompile ile sınanacak).
 
