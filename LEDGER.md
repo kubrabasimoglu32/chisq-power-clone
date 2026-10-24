@@ -28,8 +28,8 @@ Kaynak: G*Power 3.1 kılavuzu, "Goodness-of-fit tests: Contingency tables" böl�
 | A4 | Actual power ≥ hedef power | 15/15 | 1–12, 14, 27, 28 | tutuyor |
 | A4b | Güç, scipy `ncx2.sf` ile 7 basamak aynı (a priori ve post hoc) | 21/21 | 1–12, 14–20, 27, 28 | tutuyor |
 | A5 | Post hoc güç, aynı girdili a priori actual power'a eşittir | 2/2 çift | 1↔15, 12↔19 | tutuyor |
-| A6 | Hedef power < α → Input error: "Power must be greater than or equal to alpha." | 1/1 | 13 | tutuyor |
-| A6b | Hedef power = α kabul edilir (hata yok) | 1/1 | 28 | tutuyor |
+| A6 | Hedef power < α → Input error: "Power must be greater than or equal to alpha." | 1/1 | 13 | **[REA] R5a ile kanıtlandı** |
+| A6b | Hedef power = α kabul edilir (hata yok) | 1/1 | 28 | **[REA] R5a ile kanıtlandı** (`<=`) |
 | A6c | w ≤ 1e-06 (0 ve negatif dahil) → "Effect size w must be greater 1e-06." | 2/2 | 21, 22 | tutuyor. Tam eşik (1e-06'nın kendisi) sınanmadı |
 | A6d | α ∉ (1e-07, 1) → "Alpha is outside the admissible range (1e-07, 1)." | 2/2 (α=0, α=1) | 23, 24 | tutuyor. Sınırların açık/kapalı olduğu sınanmadı |
 | A6e | Df < 1 → "Degrees of Freedom must be greater or equal one." | 1/1 | 25 | tutuyor |
@@ -52,7 +52,7 @@ Durum sütunu: **DİZE** = dize binary'de bulundu, ekrandaki mesajla eşleşti. 
 
 | id | iddia | dize adresi | alıntı (binary) | oracle | durum |
 |---|---|---|---|---|---|
-| R5a | power < α hatası | `005c6220` → **`FUN_004880e0`** (XREF[1]) | `"Power must be greater than or equal to alpha."` | 13 | DİZE ✓ · XREF ✓ · karşılaştırma koşulu bekliyor |
+| R5a | power < α hatası; **power = α kabul** (karşılaştırma `<=`) | `005c6220` → **`FUN_004880e0`** @ `004880e6` (`COMISD` + `JC`) | `if (param_2 <= param_3) return 1;` — aksi halde `FUN_00437db0(..., "Power must be greater than or equal to alpha.")` | 13, 28 | **KANITLANDI** |
 | R5b | Df < 1 hatası | `005c615c` | `"Degrees of Freedom must be greater or equal one."` | 25 | DİZE ✓ · XREF bekliyor |
 | R5c | α aralık hatası; sınırlar dizede yok, çalışma anında ekleniyor | `005c6100` | `"Alpha is outside the admissible range ("` | 23, 24 | DİZE ✓ (önek) · XREF ve sabitler (1e-07, 1) bekliyor |
 | R5d | N aralık hatası; sınırlar çalışma anında ekleniyor | `005c6524` | `"Total sample size is outside the admissible range ("` | 26 | DİZE ✓ (önek) · XREF ve sabit (2147483646) bekliyor |
@@ -63,6 +63,8 @@ Ek referanslar (aynı Listing ekranından):
 - `005c61d8` `" is outside the admissible range ("` → XREF[2]: `FUN_00487b70`, `FUN_00488200` (genel aralık mesajı, birden çok doğrulayıcı kullanıyor)
 - `005c61fc` `" is inside the prohibited range ("` → XREF[1]: `FUN_00487a40`
 - `005c6250` `"Sample size must be greater than or equal to "` → XREF[1]: `FUN_00488700`
+
+**R5a ayrıntı:** `FUN_004880e0(this, double, double)` iki ondalık alır, `param_2 <= param_3` ise 1 döndürür. Parametre rolleri (param_2 = α, param_3 = power) mesaj metninden çıkarıldı. Eşitlik kabul edildiği için oracle id 28 (power = α → hesaplar, N 1) binary ile tutarlı. `FUN_00437db0(this+0x2b0, mesaj)` ortak hata bildirim fonksiyonu gibi görünüyor ([AJAN]; referans listesiyle sınanacak).
 
 Doğrulama fonksiyonları `0x00487a40`–`0x00488700` aralığında kümeleniyor: ortak bir girdi doğrulama modülü olması muhtemel ([AJAN], decompile ile sınanacak).
 

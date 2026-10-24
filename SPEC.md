@@ -143,7 +143,7 @@ Feature: χ² olumsallık tablosu güç analizi (chi2-contingency)
       | 26        | post-hoc | n_total | 0     | OUT_OF_RANGE | "Total sample size is outside the admissible range" |
       | — (X05)   | a-priori | power   | 1     | OUT_OF_RANGE | oracle bekleniyor                                   |
 
-  # [AJAN] A6 — kod seçimi bizim kararımız (S4)
+  # [REA] R5a (FUN_004880e0: power ≥ α değilse hata) — hata kodu seçimi bizim kararımız (S4)
   Scenario: Hedef güç α'dan küçük
     When "--mode a-priori --w 0.3 --alpha 0.05 --power 0.04 --df 1" çalıştırılır
     Then çıkış kodu 2'dir
